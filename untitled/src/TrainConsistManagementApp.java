@@ -1,41 +1,41 @@
-import java.util.LinkedList;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class TrainConsistManagementApp {
 
     public static void main(String[] args) {
         System.out.println("=== Train Consist Management App ===");
 
-        // --- UC4: Maintain Ordered Bogie IDs (LinkedList) ---
-        // Using LinkedList to model the physical "chain" of a train
-        LinkedList<String> trainConsist = new LinkedList<>();
+        // --- UC5: Preserve Insertion Order & Ensure Uniqueness (LinkedHashSet) ---
+        // Modeling a train yard where bogies are attached in a specific sequence
+        Set<String> trainFormation = new LinkedHashSet<>();
 
-        // 1. Adding Bogies to the consist
-        trainConsist.add("Sleeper");
-        trainConsist.add("AC Coach");
-        trainConsist.add("Cargo");
+        // 1. Attaching bogies in a specific physical sequence
+        trainFormation.add("Engine");
+        trainFormation.add("Sleeper");
+        trainFormation.add("Cargo");
+        trainFormation.add("Guard");
 
-        // 2. addFirst() - Adding the Engine at the beginning
-        trainConsist.addFirst("Engine");
+        System.out.println("Initial Train Formation (Ordered): " + trainFormation);
 
-        // 3. addLast() - Adding the Guard Coach at the tail
-        trainConsist.addLast("Guard Coach");
+        // 2. Attempting to attach a duplicate bogie intentionally
+        // In a real yard, you can't attach the same physical bogie twice!
+        System.out.println("\nAttempting to re-attach: Sleeper...");
+        boolean isAdded = trainFormation.add("Sleeper");
 
-        System.out.println("Initial Train Formation: " + trainConsist);
-
-        // 4. add(index, element) - Inserting a Pantry Car at position 2
-        // Position 2 means it will be: [Engine, Sleeper, PANTRY, AC Coach...]
-        trainConsist.add(2, "Pantry Car");
-        System.out.println("After adding Pantry Car at position 2: " + trainConsist);
-
-        // 5. removeFirst() and removeLast()
-        // Simulating detaching the Engine and the Guard Coach for maintenance
-        trainConsist.removeFirst();
-        trainConsist.removeLast();
-
-        // Display the final ordered train consist
-        System.out.println("\nFinal Ordered Train Consist (After detaching ends):");
-        for (String bogie : trainConsist) {
-            System.out.println("- " + bogie);
+        if (!isAdded) {
+            System.out.println("System Alert: Duplicate bogie 'Sleeper' rejected. Uniqueness maintained.");
         }
+
+        // 3. Display the final formation
+        // Notice that the order is preserved (Engine first, Guard last)
+        System.out.println("\nFinal Verified Train Formation:");
+        int position = 1;
+        for (String bogie : trainFormation) {
+            System.out.println("Position " + position + ": " + bogie);
+            position++;
+        }
+
+        System.out.println("\nTotal Unique Bogies in Formation: " + trainFormation.size());
     }
 }
