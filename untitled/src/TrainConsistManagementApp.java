@@ -1,36 +1,37 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TrainConsistManagementApp {
 
     public static void main(String[] args) {
-        // Welcome Message
         System.out.println("=== Train Consist Management App ===");
 
-        // Initialize Train Consist (ArrayList)
+        // UC2: List of Bogie Types
         List<String> trainConsist = new ArrayList<>();
-
-        // --- UC2: Adding Passenger Bogies ---
         trainConsist.add("Sleeper");
-        trainConsist.add("AC Chair");
         trainConsist.add("First Class");
 
-        System.out.println("Bogies added: " + trainConsist);
+        // --- UC3: Tracking Unique Bogie IDs (HashSet) ---
+        Set<String> bogieIds = new HashSet<>();
 
-        // --- UC2: Removing a Bogie ---
-        // Let's simulate removing "AC Chair"
-        trainConsist.remove("AC Chair");
-        System.out.println("After removing AC Chair: " + trainConsist);
+        // Adding Bogie IDs
+        bogieIds.add("BG101");
+        bogieIds.add("BG102");
+        bogieIds.add("BG103");
 
-        // --- UC2: Checking Existence ---
-        if (trainConsist.contains("Sleeper")) {
-            System.out.println("Sleeper bogie is present in the consist.");
-        } else {
-            System.out.println("Sleeper bogie is NOT present.");
+        // Intentionally adding a duplicate ID
+        System.out.println("Attempting to add duplicate ID: BG101...");
+        bogieIds.add("BG101");
+
+        // Display the Unique IDs
+        System.out.println("Registered Unique Bogie IDs: " + bogieIds);
+        System.out.println("Total Unique Bogies: " + bogieIds.size());
+
+        // Business Rule Check
+        if (bogieIds.size() != 4) { // We tried to add 4, but only 3 are unique
+            System.out.println("Note: Duplicate IDs were automatically filtered by HashSet.");
         }
-
-        // Final Consist Summary
-        System.out.println("Final Bogie Count: " + trainConsist.size());
-        System.out.println("Current Consist: " + trainConsist);
     }
 }
