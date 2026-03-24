@@ -1,37 +1,41 @@
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.LinkedList;
 
 public class TrainConsistManagementApp {
 
     public static void main(String[] args) {
         System.out.println("=== Train Consist Management App ===");
 
-        // UC2: List of Bogie Types
-        List<String> trainConsist = new ArrayList<>();
+        // --- UC4: Maintain Ordered Bogie IDs (LinkedList) ---
+        // Using LinkedList to model the physical "chain" of a train
+        LinkedList<String> trainConsist = new LinkedList<>();
+
+        // 1. Adding Bogies to the consist
         trainConsist.add("Sleeper");
-        trainConsist.add("First Class");
+        trainConsist.add("AC Coach");
+        trainConsist.add("Cargo");
 
-        // --- UC3: Tracking Unique Bogie IDs (HashSet) ---
-        Set<String> bogieIds = new HashSet<>();
+        // 2. addFirst() - Adding the Engine at the beginning
+        trainConsist.addFirst("Engine");
 
-        // Adding Bogie IDs
-        bogieIds.add("BG101");
-        bogieIds.add("BG102");
-        bogieIds.add("BG103");
+        // 3. addLast() - Adding the Guard Coach at the tail
+        trainConsist.addLast("Guard Coach");
 
-        // Intentionally adding a duplicate ID
-        System.out.println("Attempting to add duplicate ID: BG101...");
-        bogieIds.add("BG101");
+        System.out.println("Initial Train Formation: " + trainConsist);
 
-        // Display the Unique IDs
-        System.out.println("Registered Unique Bogie IDs: " + bogieIds);
-        System.out.println("Total Unique Bogies: " + bogieIds.size());
+        // 4. add(index, element) - Inserting a Pantry Car at position 2
+        // Position 2 means it will be: [Engine, Sleeper, PANTRY, AC Coach...]
+        trainConsist.add(2, "Pantry Car");
+        System.out.println("After adding Pantry Car at position 2: " + trainConsist);
 
-        // Business Rule Check
-        if (bogieIds.size() != 4) { // We tried to add 4, but only 3 are unique
-            System.out.println("Note: Duplicate IDs were automatically filtered by HashSet.");
+        // 5. removeFirst() and removeLast()
+        // Simulating detaching the Engine and the Guard Coach for maintenance
+        trainConsist.removeFirst();
+        trainConsist.removeLast();
+
+        // Display the final ordered train consist
+        System.out.println("\nFinal Ordered Train Consist (After detaching ends):");
+        for (String bogie : trainConsist) {
+            System.out.println("- " + bogie);
         }
     }
 }
