@@ -1,58 +1,53 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+// 1. Define the Custom Exception
+class InvalidCapacityException extends Exception {
+    public InvalidCapacityException(String message) {
+        super(message);
+    }
+}
+
+// 2. Bogie class with Fail-Fast Validation
 class Bogie {
     String name;
     int capacity;
 
-    Bogie(String name, int capacity) {
+    // Constructor declares it might throw our custom exception
+    Bogie(String name, int capacity) throws InvalidCapacityException {
+        if (capacity <= 0) {
+            throw new InvalidCapacityException("Invalid Capacity: " + capacity + ". Capacity must be greater than zero.");
+        }
         this.name = name;
         this.capacity = capacity;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%-15s | Capacity: %d", name, capacity);
     }
 }
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        // 1. Prepare a large dataset for meaningful benchmarking
-        List<Bogie> largeTrainConsist = new ArrayList<>();
-        for (int i = 0; i < 10000; i++) {
-            largeTrainConsist.add(new Bogie("Sleeper", 72));
-            largeTrainConsist.add(new Bogie("AC Chair", 56));
-        }
+        List<Bogie> trainConsist = new ArrayList<>();
 
-        System.out.println("--- UC13: Performance Benchmarking (10k Bogies) ---");
+        System.out.println("--- UC14: Custom Exception Handling ---");
 
-        // 2. Measure Loop-Based Filtering
-        long startTimeLoop = System.nanoTime();
-        List<Bogie> filteredLoop = new ArrayList<>();
-        for (Bogie b : largeTrainConsist) {
-            if (b.capacity > 60) {
-                filteredLoop.add(b);
+        // 3. Testing successful and failed creations
+        int[] capacitiesToTest = {72, -10, 56, 0};
+        String[] namesToTest = {"Sleeper", "Invalid_Neg", "AC Chair", "Invalid_Zero"};
+
+        for (int i = 0; i < capacitiesToTest.length; i++) {
+            try {
+                Bogie newBogie = new Bogie(namesToTest[i], capacitiesToTest[i]);
+                trainConsist.add(newBogie);
+                System.out.println("[SUCCESS] Created: " + newBogie);
+            } catch (InvalidCapacityException e) {
+                System.err.println("[ERROR] Failed to create bogie '" + namesToTest[i] + "': " + e.getMessage());
             }
         }
-        long endTimeLoop = System.nanoTime();
-        long durationLoop = endTimeLoop - startTimeLoop;
 
-        // 3. Measure Stream-Based Filtering
-        long startTimeStream = System.nanoTime();
-        List<Bogie> filteredStream = largeTrainConsist.stream()
-                .filter(b -> b.capacity > 60)
-                .collect(Collectors.toList());
-        long endTimeStream = System.nanoTime();
-        long durationStream = endTimeStream - startTimeStream;
-
-        // 4. Display Results
-        System.out.println("Loop Filtering Time   : " + durationLoop + " ns");
-        System.out.println("Stream Filtering Time : " + durationStream + " ns");
-
-        if (durationLoop < durationStream) {
-            System.out.println("RESULT: Loop-based processing was faster in this run.");
-        } else {
-            System.out.println("RESULT: Stream-based processing was faster in this run.");
-        }
-
-        // Integrity Check: Ensure both methods produced same results
-        System.out.println("\nVerification: Loop found " + filteredLoop.size() + " bogies, Stream found " + filteredStream.size());
+        System.out.println("\nFinal Valid Train Consist Size: " + trainConsist.size());
     }
 }
