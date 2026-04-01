@@ -1,49 +1,58 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-class GoodsBogie {
-    String type;
-    String cargo;
+class Bogie {
+    String name;
+    int capacity;
 
-    GoodsBogie(String type, String cargo) {
-        this.type = type;
-        this.cargo = cargo;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("[%s | Cargo: %s]", type, cargo);
+    Bogie(String name, int capacity) {
+        this.name = name;
+        this.capacity = capacity;
     }
 }
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        // 1. Prepare a list of goods bogies
-        List<GoodsBogie> goodsTrain = new ArrayList<>();
-        goodsTrain.add(new GoodsBogie("Rectangular", "Coal"));
-        goodsTrain.add(new GoodsBogie("Cylindrical", "Petroleum"));
-        goodsTrain.add(new GoodsBogie("Rectangular", "Grain"));
-        // Uncomment the line below to trigger a safety violation
-        // goodsTrain.add(new GoodsBogie("Cylindrical", "Coal"));
-
-        System.out.println("--- Goods Train Composition ---");
-        goodsTrain.forEach(System.out::println);
-
-        // 2. UC12: Safety Compliance Check using allMatch()
-        // Rule: If type is "Cylindrical", cargo MUST be "Petroleum"
-        boolean isSafe = goodsTrain.stream().allMatch(bogie -> {
-            if (bogie.type.equalsIgnoreCase("Cylindrical")) {
-                return bogie.cargo.equalsIgnoreCase("Petroleum");
-            }
-            return true; // Non-cylindrical bogies are always considered safe here
-        });
-
-        // 3. Display the Safety Result
-        System.out.println("\n--- Safety Inspection Report ---");
-        if (isSafe) {
-            System.out.println("STATUS: [SAFE] - All safety constraints met. Train is cleared for departure.");
-        } else {
-            System.out.println("STATUS: [DANGER] - Safety violation detected! Check cylindrical bogie cargo.");
+        // 1. Prepare a large dataset for meaningful benchmarking
+        List<Bogie> largeTrainConsist = new ArrayList<>();
+        for (int i = 0; i < 10000; i++) {
+            largeTrainConsist.add(new Bogie("Sleeper", 72));
+            largeTrainConsist.add(new Bogie("AC Chair", 56));
         }
+
+        System.out.println("--- UC13: Performance Benchmarking (10k Bogies) ---");
+
+        // 2. Measure Loop-Based Filtering
+        long startTimeLoop = System.nanoTime();
+        List<Bogie> filteredLoop = new ArrayList<>();
+        for (Bogie b : largeTrainConsist) {
+            if (b.capacity > 60) {
+                filteredLoop.add(b);
+            }
+        }
+        long endTimeLoop = System.nanoTime();
+        long durationLoop = endTimeLoop - startTimeLoop;
+
+        // 3. Measure Stream-Based Filtering
+        long startTimeStream = System.nanoTime();
+        List<Bogie> filteredStream = largeTrainConsist.stream()
+                .filter(b -> b.capacity > 60)
+                .collect(Collectors.toList());
+        long endTimeStream = System.nanoTime();
+        long durationStream = endTimeStream - startTimeStream;
+
+        // 4. Display Results
+        System.out.println("Loop Filtering Time   : " + durationLoop + " ns");
+        System.out.println("Stream Filtering Time : " + durationStream + " ns");
+
+        if (durationLoop < durationStream) {
+            System.out.println("RESULT: Loop-based processing was faster in this run.");
+        } else {
+            System.out.println("RESULT: Stream-based processing was faster in this run.");
+        }
+
+        // Integrity Check: Ensure both methods produced same results
+        System.out.println("\nVerification: Loop found " + filteredLoop.size() + " bogies, Stream found " + filteredStream.size());
     }
 }
