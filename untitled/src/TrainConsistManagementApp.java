@@ -1,44 +1,40 @@
-import java.util.ArrayList;
-import java.util.List;
-
-class Bogie {
-    String name;
-    int capacity;
-
-    Bogie(String name, int capacity) {
-        this.name = name;
-        this.capacity = capacity;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%-15s | Capacity: %d", name, capacity);
-    }
-}
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        // 1. Setup the list of bogies
-        List<Bogie> trainConsist = new ArrayList<>();
-        trainConsist.add(new Bogie("Sleeper", 72));
-        trainConsist.add(new Bogie("Sleeper", 72));
-        trainConsist.add(new Bogie("AC Chair", 56));
-        trainConsist.add(new Bogie("First Class", 24));
+        // 1. Define Regex Patterns
+        // TRN- followed by exactly 4 digits
+        String trainIdRegex = "TRN-\\d{4}";
+        // PET- followed by exactly 2 uppercase letters
+        String cargoCodeRegex = "PET-[A-Z]{2}";
 
-        System.out.println("--- Train Composition ---");
-        trainConsist.forEach(System.out::println);
+        // 2. Sample Inputs to Test
+        String[] testTrainIds = {"TRN-1234", "TRN-88", "TRAIN-123", "TRN-abcd"};
+        String[] testCargoCodes = {"PET-AB", "PET-bc", "GAS-12", "PET-XYZ"};
 
-        // 2. UC10: Aggregate total seats using map and reduce
-        // map(b -> b.capacity) transforms Bogie objects into a stream of Integers
-        // reduce(0, Integer::sum) starts at 0 and adds every value together
-        int totalSeats = trainConsist.stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
+        System.out.println("--- UC11: Train ID & Cargo Code Validation ---");
 
-        System.out.println("\n--- Statistical Analysis (UC10) ---");
-        System.out.println("Total Seating Capacity of the Train: " + totalSeats + " seats");
+        // 3. Validate Train IDs
+        System.out.println("\nValidating Train IDs (Format: TRN-dddd):");
+        Pattern trainPattern = Pattern.compile(trainIdRegex);
+        for (String id : testTrainIds) {
+            Matcher matcher = trainPattern.matcher(id);
+            printResult("Train ID", id, matcher.matches());
+        }
 
-        // Verification: Original list remains unchanged
-        System.out.println("(Processed " + trainConsist.size() + " bogies for this calculation)");
+        // 4. Validate Cargo Codes
+        System.out.println("\nValidating Cargo Codes (Format: PET-AA):");
+        Pattern cargoPattern = Pattern.compile(cargoCodeRegex);
+        for (String code : testCargoCodes) {
+            Matcher matcher = cargoPattern.matcher(code);
+            printResult("Cargo Code", code, matcher.matches());
+        }
+    }
+
+    // Helper method to display validation status
+    private static void printResult(String type, String value, boolean isValid) {
+        String status = isValid ? "[VALID]" : "[INVALID]";
+        System.out.printf("%-12s: %-10s %s%n", type, value, status);
     }
 }
