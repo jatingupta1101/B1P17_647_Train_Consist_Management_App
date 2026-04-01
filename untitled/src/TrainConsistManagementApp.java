@@ -1,40 +1,49 @@
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
+
+class GoodsBogie {
+    String type;
+    String cargo;
+
+    GoodsBogie(String type, String cargo) {
+        this.type = type;
+        this.cargo = cargo;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("[%s | Cargo: %s]", type, cargo);
+    }
+}
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        // 1. Define Regex Patterns
-        // TRN- followed by exactly 4 digits
-        String trainIdRegex = "TRN-\\d{4}";
-        // PET- followed by exactly 2 uppercase letters
-        String cargoCodeRegex = "PET-[A-Z]{2}";
+        // 1. Prepare a list of goods bogies
+        List<GoodsBogie> goodsTrain = new ArrayList<>();
+        goodsTrain.add(new GoodsBogie("Rectangular", "Coal"));
+        goodsTrain.add(new GoodsBogie("Cylindrical", "Petroleum"));
+        goodsTrain.add(new GoodsBogie("Rectangular", "Grain"));
+        // Uncomment the line below to trigger a safety violation
+        // goodsTrain.add(new GoodsBogie("Cylindrical", "Coal"));
 
-        // 2. Sample Inputs to Test
-        String[] testTrainIds = {"TRN-1234", "TRN-88", "TRAIN-123", "TRN-abcd"};
-        String[] testCargoCodes = {"PET-AB", "PET-bc", "GAS-12", "PET-XYZ"};
+        System.out.println("--- Goods Train Composition ---");
+        goodsTrain.forEach(System.out::println);
 
-        System.out.println("--- UC11: Train ID & Cargo Code Validation ---");
+        // 2. UC12: Safety Compliance Check using allMatch()
+        // Rule: If type is "Cylindrical", cargo MUST be "Petroleum"
+        boolean isSafe = goodsTrain.stream().allMatch(bogie -> {
+            if (bogie.type.equalsIgnoreCase("Cylindrical")) {
+                return bogie.cargo.equalsIgnoreCase("Petroleum");
+            }
+            return true; // Non-cylindrical bogies are always considered safe here
+        });
 
-        // 3. Validate Train IDs
-        System.out.println("\nValidating Train IDs (Format: TRN-dddd):");
-        Pattern trainPattern = Pattern.compile(trainIdRegex);
-        for (String id : testTrainIds) {
-            Matcher matcher = trainPattern.matcher(id);
-            printResult("Train ID", id, matcher.matches());
+        // 3. Display the Safety Result
+        System.out.println("\n--- Safety Inspection Report ---");
+        if (isSafe) {
+            System.out.println("STATUS: [SAFE] - All safety constraints met. Train is cleared for departure.");
+        } else {
+            System.out.println("STATUS: [DANGER] - Safety violation detected! Check cylindrical bogie cargo.");
         }
-
-        // 4. Validate Cargo Codes
-        System.out.println("\nValidating Cargo Codes (Format: PET-AA):");
-        Pattern cargoPattern = Pattern.compile(cargoCodeRegex);
-        for (String code : testCargoCodes) {
-            Matcher matcher = cargoPattern.matcher(code);
-            printResult("Cargo Code", code, matcher.matches());
-        }
-    }
-
-    // Helper method to display validation status
-    private static void printResult(String type, String value, boolean isValid) {
-        String status = isValid ? "[VALID]" : "[INVALID]";
-        System.out.printf("%-12s: %-10s %s%n", type, value, status);
     }
 }
