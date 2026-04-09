@@ -1,18 +1,22 @@
-// UC17: Sort Bogie Names using Arrays.sort()
+// UC18: Linear Search for Bogie ID
 
-import java.util.Arrays;
+class BogieSearch {
 
-class BogieNameSorter {
+    // Linear Search Method
+    public static boolean linearSearch(String[] bogieIds, String key) {
 
-    // Method to sort bogie names
-    public static void sortBogieNames(String[] bogieNames) {
-        // Using built-in sorting
-        Arrays.sort(bogieNames);
-    }
+        for (int i = 0; i < bogieIds.length; i++) {
 
-    // Utility method to print array
-    public static void printArray(String[] arr) {
-        System.out.println(Arrays.toString(arr));
+            // Compare using equals()
+            if (bogieIds[i].equals(key)) {
+                System.out.println("✅ Bogie ID found at position: " + i);
+                return true; // Early termination
+            }
+        }
+
+        // If not found
+        System.out.println("❌ Bogie ID not found.");
+        return false;
     }
 }
 
@@ -20,35 +24,27 @@ class BogieNameSorter {
 public class MainApp {
     public static void main(String[] args) {
 
-        System.out.println("=== Train Consist Management: UC17 Demo ===\n");
+        System.out.println("=== Train Consist Management: UC18 Demo ===\n");
 
-        // ✅ Test Case 1: Basic Alphabetical Sorting
-        String[] arr1 = {"Sleeper","AC Chair","First Class","General","Luxury"};
-        System.out.print("Before Sorting: ");
-        BogieNameSorter.printArray(arr1);
+        // Sample Bogie IDs (Unsorted)
+        String[] bogieIds = {"BG101","BG205","BG309","BG412","BG550"};
 
-        BogieNameSorter.sortBogieNames(arr1);
+        // ✅ Test Case 1: Bogie Found
+        BogieSearch.linearSearch(bogieIds, "BG309");
 
-        System.out.print("After Sorting:  ");
-        BogieNameSorter.printArray(arr1);
-        System.out.println();
+        // ❌ Test Case 2: Bogie Not Found
+        BogieSearch.linearSearch(bogieIds, "BG999");
 
-        // ✅ Test Case 2: Unsorted Input
-        String[] arr2 = {"Luxury","General","Sleeper","AC Chair"};
-        BogieNameSorter.sortBogieNames(arr2);
+        // ✅ Test Case 3: First Element Match
+        BogieSearch.linearSearch(bogieIds, "BG101");
 
-        // ✅ Test Case 3: Already Sorted
-        String[] arr3 = {"AC Chair","First Class","General"};
-        BogieNameSorter.sortBogieNames(arr3);
+        // ✅ Test Case 4: Last Element Match
+        BogieSearch.linearSearch(bogieIds, "BG550");
 
-        // ✅ Test Case 4: Duplicate Bogie Names
-        String[] arr4 = {"Sleeper","AC Chair","Sleeper","General"};
-        BogieNameSorter.sortBogieNames(arr4);
+        // ✅ Test Case 5: Single Element Array
+        String[] single = {"BG101"};
+        BogieSearch.linearSearch(single, "BG101");
 
-        // ✅ Test Case 5: Single Element
-        String[] arr5 = {"Sleeper"};
-        BogieNameSorter.sortBogieNames(arr5);
-
-        System.out.println("🚀 Sorting using Arrays.sort() completed!");
+        System.out.println("\n🚀 Search operations completed!");
     }
 }
