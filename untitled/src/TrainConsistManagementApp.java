@@ -1,50 +1,38 @@
-// UC15: Safe Cargo Assignment Using try-catch-finally
+// UC16: Sort Passenger Bogies by Capacity using Bubble Sort
 
-// Custom Runtime Exception
-class CargoSafetyException extends RuntimeException {
-    public CargoSafetyException(String message) {
-        super(message);
-    }
-}
+class PassengerBogieSorter {
 
-// GoodsBogie Class
-class GoodsBogie {
+    // Bubble Sort Method
+    public static void bubbleSort(int[] capacities) {
+        int n = capacities.length;
 
-    private String shape;   // Rectangular or Cylindrical
-    private String cargo;
+        for (int i = 0; i < n - 1; i++) {
+            boolean swapped = false; // optimization
 
-    public GoodsBogie(String shape) {
-        this.shape = shape;
-    }
+            for (int j = 0; j < n - i - 1; j++) {
+                if (capacities[j] > capacities[j + 1]) {
+                    // Swap
+                    int temp = capacities[j];
+                    capacities[j] = capacities[j + 1];
+                    capacities[j + 1] = temp;
 
-    // Method to assign cargo safely
-    public void assignCargo(String cargoType) {
-        try {
-            // Validation logic
-            if (shape.equalsIgnoreCase("Rectangular") &&
-                    cargoType.equalsIgnoreCase("Petroleum")) {
-
-                throw new CargoSafetyException(
-                        "Unsafe cargo! Petroleum cannot be assigned to Rectangular bogie."
-                );
+                    swapped = true;
+                }
             }
 
-            // Safe assignment
-            this.cargo = cargoType;
-            System.out.println("✅ Cargo assigned successfully: " + cargoType);
-
-        } catch (CargoSafetyException e) {
-            // Handle exception gracefully
-            System.out.println("❌ ERROR: " + e.getMessage());
-
-        } finally {
-            // Always executes
-            System.out.println("ℹ️ Cargo assignment attempt completed.\n");
+            // If no swaps → already sorted
+            if (!swapped) {
+                break;
+            }
         }
     }
 
-    public String getCargo() {
-        return cargo;
+    // Utility method to print array
+    public static void printArray(int[] arr) {
+        for (int val : arr) {
+            System.out.print(val + " ");
+        }
+        System.out.println();
     }
 }
 
@@ -52,23 +40,35 @@ class GoodsBogie {
 public class MainApp {
     public static void main(String[] args) {
 
-        System.out.println("=== Train Consist Management: UC15 Demo ===\n");
+        System.out.println("=== Train Consist Management: UC16 Demo ===\n");
 
-        // ✅ Test Case 1: Safe Assignment
-        GoodsBogie bogie1 = new GoodsBogie("Cylindrical");
-        bogie1.assignCargo("Petroleum");
+        // ✅ Test Case 1: Basic Sorting
+        int[] arr1 = {72, 56, 24, 70, 60};
+        System.out.print("Before Sorting: ");
+        PassengerBogieSorter.printArray(arr1);
 
-        // ❌ Test Case 2: Unsafe Assignment
-        GoodsBogie bogie2 = new GoodsBogie("Rectangular");
-        bogie2.assignCargo("Petroleum");
+        PassengerBogieSorter.bubbleSort(arr1);
 
-        // ✅ Test Case 3: Cargo Not Assigned After Failure
-        System.out.println("Cargo in bogie2: " + bogie2.getCargo()); // should be null
+        System.out.print("After Sorting:  ");
+        PassengerBogieSorter.printArray(arr1);
+        System.out.println();
 
-        // ✅ Test Case 4: Program Continues
-        GoodsBogie bogie3 = new GoodsBogie("Rectangular");
-        bogie3.assignCargo("Coal");
+        // ✅ Test Case 2: Already Sorted
+        int[] arr2 = {24, 56, 60, 70, 72};
+        PassengerBogieSorter.bubbleSort(arr2);
 
-        System.out.println("🚀 Program continues after exception handling!");
+        // ✅ Test Case 3: Duplicate Values
+        int[] arr3 = {72, 56, 56, 24};
+        PassengerBogieSorter.bubbleSort(arr3);
+
+        // ✅ Test Case 4: Single Element
+        int[] arr4 = {50};
+        PassengerBogieSorter.bubbleSort(arr4);
+
+        // ✅ Test Case 5: All Equal Values
+        int[] arr5 = {40, 40, 40};
+        PassengerBogieSorter.bubbleSort(arr5);
+
+        System.out.println("🚀 Sorting completed successfully!");
     }
 }
